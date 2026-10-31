@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: packpilot-config
+  namespace: packpilot
+data:
+  MONGO_HOST: "packpilot-mongo"
+  MONGO_PORT: "27017"
+  MONGO_DATABASE: "packpilot"
+  MONGO_AUTH_DATABASE: "admin"
+  GENERATOR_SERVICE_URL: "http://packing-generator-service:8080"

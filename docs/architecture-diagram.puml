@@ -1,0 +1,19 @@
+@startuml
+
+skinparam componentStyle rectangle
+skinparam backgroundColor white
+skinparam defaultTextAlignment center
+
+actor "Browser\n(outside the cluster)" as Browser
+
+package "Kubernetes namespace: packpilot" {
+  component "packing-trip-service\nDeployment, N replicas\n\nserves the web UI\nREST API: /packing-lists/*\nREST client of the generator" as Trip
+  component "packing-generator-service\nDeployment, M replicas, stateless\n\nREST API: POST /packing-lists/generate" as Generator
+  database "packpilot-mongo\nStatefulSet, 1 replica, 1 PVC\n\nstores trips/checklists\nas JSON documents" as Mongo
+}
+
+Browser --> Trip : HTTP, port 8080\n(NodePort / port-forward)
+Trip --> Generator : HTTP (REST), port 8080
+Trip --> Mongo : MongoDB wire protocol, port 27017
+
+@enduml

@@ -1,0 +1,79 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-dns
+  namespace: packpilot
+spec:
+  podSelector: {}
+  policyTypes: ["Egress"]
+  egress:
+    - to: []
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: mongo-allow-from-trip-service-only
+  namespace: packpilot
+spec:
+  podSelector:
+    matchLabels:
+      app: packpilot-mongo
+  policyTypes: ["Ingress"]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: packing-trip-service
+      ports:
+        - protocol: TCP
+          port: 27017
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: generator-allow-from-trip-service-only
+  namespace: packpilot
+spec:
+  podSelector:
+    matchLabels:
+      app: packing-generator-service
+  policyTypes: ["Ingress"]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: packing-trip-service
+      ports:
+        - protocol: TCP
+          port: 8080
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: trip-service-allow-egress-to-dependencies
+  namespace: packpilot
+spec:
+  podSelector:
+    matchLabels:
+      app: packing-trip-service
+  policyTypes: ["Egress"]
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app: packpilot-mongo
+      ports:
+        - protocol: TCP
+          port: 27017
+    - to:
+        - podSelector:
+            matchLabels:
+              app: packing-generator-service
+      ports:
+        - protocol: TCP
+          port: 8080

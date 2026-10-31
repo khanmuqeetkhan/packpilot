@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PackPilot</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>PackPilot</h1>
+    <p class="tagline">Generate a packing checklist, save it, check things off</p>
+  </header>
+
+  <main>
+    <section class="panel" id="generate-panel">
+      <h2>Generate a checklist</h2>
+      <form id="generate-form">
+        <label>
+          Climate
+          <select name="climate" id="climate">
+            <option value="cold">Cold</option>
+            <option value="mild" selected>Mild</option>
+            <option value="warm">Warm</option>
+            <option value="tropical">Tropical</option>
+            <option value="variable">Variable</option>
+          </select>
+        </label>
+        <label>
+          Trip length (days)
+          <input type="number" id="trip-length" min="1" max="60" value="5" />
+        </label>
+        <label>
+          Adults
+          <input type="number" id="adults" min="0" max="10" value="1" />
+        </label>
+        <label>
+          Children
+          <input type="number" id="children" min="0" max="10" value="0" />
+        </label>
+        <label>
+          Toddlers
+          <input type="number" id="toddlers" min="0" max="10" value="0" />
+        </label>
+        <fieldset>
+          <legend>Activities</legend>
+          <label class="checkbox"><input type="checkbox" value="beach" /> Beach</label>
+          <label class="checkbox"><input type="checkbox" value="hiking" /> Hiking</label>
+          <label class="checkbox"><input type="checkbox" value="business" /> Business</label>
+          <label class="checkbox"><input type="checkbox" value="winter_sports" /> Winter sports</label>
+          <label class="checkbox"><input type="checkbox" value="formal_event" /> Formal event</label>
+        </fieldset>
+        <button type="submit">Generate checklist</button>
+      </form>
+
+      <div id="result" class="result hidden">
+        <h3 id="result-title"></h3>
+        <div id="result-items"></div>
+        <label>
+          Trip name
+          <input type="text" id="save-trip-name" placeholder="e.g. Tokyo with the kids" />
+        </label>
+        <button id="save-button">Save this trip</button>
+        <span id="save-status"></span>
+      </div>
+    </section>
+
+    <section class="panel" id="library-panel">
+      <h2>Your saved trips</h2>
+      <div class="filters">
+        <input type="text" id="search-box" placeholder="Search by trip name" />
+        <button id="refresh-button">Refresh</button>
+      </div>
+      <div id="trip-list"></div>
+    </section>
+  </main>
+
+  <footer>
+    <p>packing-trip-service &rarr; packing-generator-service &rarr; MongoDB</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

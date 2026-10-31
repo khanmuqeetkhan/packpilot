@@ -1,0 +1,90 @@
+### PackPilot - packing-trip-service
+### IntelliJ HTTP Client file. Needs a reachable MongoDB and a reachable
+### packing-generator-service (see this service's README for how to run
+### both locally). Requests below run top to bottom: the "Save a trip"
+### request is named (# @name saveTrip), so later requests reuse the id
+### from its response automatically. The item-level requests expect an
+### item id copied from a previous response, replace @itemId below once
+### you have one.
+
+@baseUrl = http://localhost:8080
+@itemId = replace-with-an-item-id-from-a-response-above
+
+### Ask the generator service for a draft. Nothing is saved yet.
+POST {{baseUrl}}/packing-lists/generate
+Content-Type: application/json
+
+{
+  "climate": "warm",
+  "tripLengthDays": 4,
+  "adults": 2,
+  "activities": ["business"]
+}
+
+### Save a trip (using a draft you already have, or one typed by hand)
+# @name saveTrip
+POST {{baseUrl}}/packing-lists
+Content-Type: application/json
+
+{
+  "tripName": "Lisbon business trip",
+  "climate": "warm",
+  "tripLengthDays": 4,
+  "adults": 2,
+  "children": 0,
+  "toddlers": 0,
+  "activities": ["business"],
+  "items": [
+    { "category": "CLOTHING", "name": "Suit", "quantity": 1, "note": null },
+    { "category": "ELECTRONICS", "name": "Laptop", "quantity": 1, "note": null }
+  ]
+}
+
+### List all saved trips
+GET {{baseUrl}}/packing-lists
+
+### List saved trips filtered by climate
+GET {{baseUrl}}/packing-lists?climate=warm
+
+### Search saved trips by name
+GET {{baseUrl}}/packing-lists?search=Lisbon
+
+### Get the trip just saved above
+GET {{baseUrl}}/packing-lists/{{saveTrip.response.body.$.id}}
+
+### Rename the trip just saved above
+PUT {{baseUrl}}/packing-lists/{{saveTrip.response.body.$.id}}
+Content-Type: application/json
+
+{
+  "tripName": "Lisbon business trip (updated)"
+}
+
+### Add a custom item to the trip. Copy the new item's id from the
+### response into @itemId above to use the two requests below.
+POST {{baseUrl}}/packing-lists/{{saveTrip.response.body.$.id}}/items
+Content-Type: application/json
+
+{
+  "category": "ELECTRONICS",
+  "name": "Laptop charger",
+  "quantity": 1,
+  "note": null
+}
+
+### Check an item off, or change its quantity or note
+PUT {{baseUrl}}/packing-lists/{{saveTrip.response.body.$.id}}/items/{{itemId}}
+Content-Type: application/json
+
+{
+  "checked": true
+}
+
+### Remove an item
+DELETE {{baseUrl}}/packing-lists/{{saveTrip.response.body.$.id}}/items/{{itemId}}
+
+### Delete the trip
+DELETE {{baseUrl}}/packing-lists/{{saveTrip.response.body.$.id}}
+
+### Health check
+GET {{baseUrl}}/actuator/health

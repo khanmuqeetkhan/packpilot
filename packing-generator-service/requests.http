@@ -1,0 +1,63 @@
+### PackPilot - packing-generator-service
+### IntelliJ HTTP Client file. Run this service first (mvn spring-boot:run),
+### then execute requests below with the green arrow next to each one.
+
+@baseUrl = http://localhost:8080
+
+### Generate a checklist - tropical trip with beach and hiking
+POST {{baseUrl}}/packing-lists/generate
+Content-Type: application/json
+
+{
+  "climate": "tropical",
+  "tripLengthDays": 7,
+  "adults": 2,
+  "children": 1,
+  "toddlers": 0,
+  "activities": ["beach", "hiking"]
+}
+
+### Generate a checklist - cold trip with winter sports, toddler included
+POST {{baseUrl}}/packing-lists/generate
+Content-Type: application/json
+
+{
+  "climate": "cold",
+  "tripLengthDays": 5,
+  "adults": 2,
+  "toddlers": 1,
+  "activities": ["winter_sports"]
+}
+
+### Generate a checklist - business trip, minimal fields
+POST {{baseUrl}}/packing-lists/generate
+Content-Type: application/json
+
+{
+  "climate": "mild",
+  "tripLengthDays": 3,
+  "adults": 1,
+  "activities": ["business", "formal_event"]
+}
+
+### Unknown climate is rejected with 400 and an explanatory message
+POST {{baseUrl}}/packing-lists/generate
+Content-Type: application/json
+
+{
+  "climate": "arctic",
+  "tripLengthDays": 3
+}
+
+### Unknown activity is rejected with 400 and an explanatory message
+POST {{baseUrl}}/packing-lists/generate
+Content-Type: application/json
+
+{
+  "climate": "warm",
+  "tripLengthDays": 3,
+  "activities": ["skydiving"]
+}
+
+### Health check
+GET {{baseUrl}}/actuator/health
